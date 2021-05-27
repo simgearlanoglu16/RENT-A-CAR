@@ -1,0 +1,22 @@
+#include <stdio.h>
+
+void ana_menu(){ // Kullanici girisindeki ana menu.
+	int anamenu;
+	
+	printf("\n-----ANA MENU-----");
+    printf("\n\n\n");
+    printf(" [1]-Arac Kiralama \n");
+    printf(" [2]-Kullanici Haklarim \n");
+    printf(" [3]-Destek ve Iletisim \n");
+    printf("\n\n\n");
+    printf("Lutfen seciminizi giriniz: ");
+    scanf("%d",&anamenu);
+    
+    switch(anamenu){ // Kullanicinin menuden sectigi secenege gore fonksiyonlar ekrana gelir.
+    			
+    			case 1 : arac_kirala (); break; // Secim 1 olursa arac kirala fonksiyonu ekrana gelir.
+    			case 2 : kullanici_haklarim (); break; // Secim 2 olursa kullanici_haklarim fonksiyonu ekrana gelir.
+    			case 3 : destek_ve_iletisim (); break; // Secim 3 olursa destek_ve iletisim fonksiyonu ekrana gelir.
+    			default : printf("Hatali secim yaptiniz! \n\n"); break;
+			}
+}
