@@ -1,0 +1,583 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<stdbool.h>
+#include"lib.h"
+ 
+#define TABANYIL 1900
+
+bool DOGRU = true;
+bool YANLIS = false;
+  
+typedef struct TARIH_{ // Gun, ay ve yil bilgilerini tutan bir struct yapisi olusturduk. 
+   int gun;
+   int ay;
+   int yil;
+}TARIH;
+
+bool degisim(int yil); 
+TARIH *set_tarih(int gun, int ay, int yil, TARIH *tarih); // Tarih yapilarini pointerlarla tanimladik.
+void print_tarih(const TARIH *tarih); 	// Girilen tarihler arasindaki gun farkini hesaplayan fonksiyonlari tanimladik.
+long tarih_numarasi(const TARIH *tarih);
+int yilin_gunu(const TARIH *tarih);
+long tarih_farki(const TARIH *tarih1, const TARIH *tarih2);
+bool gecersiz(const TARIH *tarih);
+ 
+char *gunler[] = {"Pzr", "Ptesi", "Sa", "Cars", "Pers", "Cu", "Ctesi"};
+char *aylar[] = {"Ocak", "Subat", "Mart", "Nisan", "Mayis", "Haziran",
+                  "Temmuz","Agustos", "Eylul", "Ekim", "Kasim", "Aralik"};
+ 
+int guntablosu[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}; // Aylarin icerdikleri gun sayisi.
+
+bool degisim(int yil) // Subat ayinin 29 cektigi senelerin hesabi icin kullanilir.
+{
+   return (yil % 4 == 0 && yil % 100 != 0 || yil % 400 == 0); 
+}
+
+TARIH *set_tarih(int gun, int ay, int yil, TARIH *tarih) // Tarih pointerina atama islemi yapilir.
+{
+   tarih->gun = gun;      
+   tarih->ay = ay;
+   tarih->yil = yil;
+   return tarih;
+}
+
+void print_tarih(const TARIH *tarih) // Girilen tarihleri ekrana yazdirir.
+{
+   printf("%02d", tarih->gun);
+   printf("%s ", aylar[tarih->ay - 1]);
+   printf("%d ", tarih->yil);
+   printf("%s", gunler[(int)(tarih_numarasi(tarih) % 7)]);
+}
+
+long tarih_numarasi(const TARIH *tarih)
+{
+	long sonuc = 0;
+	int yil;
+ 
+	for (yil = TABANYIL; yil < tarih->yil; yil++) // Girilen yila gore gun sayisini hesaplar.
+	sonuc += 365 + degisim(yil);
+	sonuc += yilin_gunu(tarih);
+	return sonuc;
+}
+
+int yilin_gunu(const TARIH *tarih) // Girilen aya gore gun sayisini hesaplar.
+{
+	int k;
+	int sonuc = tarih->gun;
+ 
+	guntablosu[1] = 28 + degisim(tarih->yil);
+ 
+	for (k = 0; k < tarih->ay - 1; ++k)
+	sonuc += guntablosu[k];
+	return sonuc;
+}
+
+long tarih_farki(const TARIH *tarih1, const TARIH *tarih2)         // Girilen iki tarih arasindaki gun farkini bulur. 
+{
+	for(;;){
+		if((tarih_numarasi(tarih2))-(tarih_numarasi(tarih1))<=0){  // Aracı teslim edecegi tarih, araci teslim alacagi tarihten kucukse kullaniciya tekrar tarih girdirilmesi saglanir. 
+			printf("\nGECERSIZ BIR TARIH GIRDINIZ \n :");             
+			return arac_kirala();
+		}
+		else{
+			return tarih_numarasi(tarih2) - tarih_numarasi(tarih1);
+		}	
+	}
+}
+
+bool gecersiz(const TARIH *tarih)
+{
+	guntablosu[1] = 28 + degisim(tarih->yil);
+ 
+	if (tarih->yil < TABANYIL)  // 1900'dan daha kucuk yil girilirse hata verir.
+		return YANLIS;
+	if (tarih->gun > guntablosu[tarih->ay - 1] || tarih->gun <= 0) // Girilen gun 0'a esit, 0'dan kucuk ve belirtilen ayin icerdigi gun sayisindan buyukse hata verir.
+      	return YANLIS;
+   	if (tarih->ay < 1 || tarih->ay > 12) // Girilen ay 1'den kucuk ve 12'den buyukse hata verir.
+      	return YANLIS;
+ 
+   	return DOGRU;
+}
+
+void arac_kirala(){
+	
+	int gun, ay, yil;
+    TARIH t1, t2;
+ 
+	for (;;){
+      	printf("\nAraci teslim alacaginiz tarih [Gun Ay Yil]: "); // 2021'den daha once bir yil girilirse veya ay 12'den buyuk bir sayi girilirse kullaniciya tekrar tarih girdirilmesi saglanir.
+      	scanf("%d%d%d", &gun, &ay, &yil);
+      	set_tarih(gun, ay, yil, &t1);
+      	if (!gecersiz(&t1))
+         	printf("Gecersiz bir tarih girdiniz!!\n");
+      	else
+         	break;
+    };
+ 
+    for (;;){
+      	printf("\nAraci teslim edeceginiz tarih [Gun Ay Yil]: "); // 2021'den daha once bir yil girilirse veya ay 12'den buyuk bir sayi girilirse kullaniciya tekrar tarih girdirilmesi sağlanir.
+      	scanf("%d%d%d", &gun, &ay, &yil);
+      	set_tarih(gun, ay, yil, &t2);
+      	if 	(!gecersiz(&t2))
+         	printf("Gecersiz bir tarih girdiniz!!\n");
+      	else
+         	break;
+	};
+ 
+   	printf("\nToplam gun farki "); // Girilen iki tarih arasındaki gun farki ekrana yazdirir.
+   	print_tarih(&t1);
+  	printf("  ve  ");
+   	print_tarih(&t2);
+   	printf(": %d\n", tarih_farki(&t1, &t2));
+
+	int tasit,motosiklet,sedan,suv,minibus;
+	int ucret,odeme;
+	
+	printf("\nTasit modellerinin ucretleri gunluk olarak yazmaktadir."); 
+	printf("\nKiralamak istediginiz tasit cesitini seciniz.");
+	printf("\n[1] - Motosiklet");
+	printf("\n[2] - Sedan");
+	printf("\n[3] - SUV");
+	printf("\n[4] - Minibus");
+	scanf("%d",&tasit);
+	
+	if(tasit==1){ // Secilen tasit modeli icin if else acilir.
+		int pcx=145, vespa=145, hondaf=170, hondanc=215; // Motosiklet modellerinin ucretleri integer olarak tanimlanir.
+		
+		printf("\nKiralamak istediginiz motosiklet modelini seciniz."); // Modeller ve fiyatlari ekrana yazdirilir.
+		printf("\n[1] - PCX 125 - 145 TL"); 
+		printf("\n[2] - VESPA 150 - 145 TL");
+		printf("\n[3] - HONDA FORZA 250 - 170 TL");
+		printf("\n[4] - HONDA NC 750X DCT - 215 TL");
+		scanf("%d",&motosiklet); //Yapilan secim taranir.
+		
+		if(motosiklet==1){ //Secilen motosiklet icin ucret hesabi yapilir.
+			ucret=pcx*tarih_farki(&t1,&t2); 
+		}
+		else if(motosiklet==2){ 
+			ucret=vespa*tarih_farki(&t1,&t2); 
+		}
+		else if(motosiklet==3){ 
+			ucret=hondaf*tarih_farki(&t1,&t2);
+		}
+		else if(motosiklet==4){ 
+			ucret=hondanc*tarih_farki(&t1,&t2); 
+		}
+		else{
+			printf("Hatali giris yaptiniz!"); //Farkli bir sayi girisi durumunda hata uyarisi verir.
+		} 
+    }
+	else if(tasit==2){ // Secilen tasit modeli icin if else acilir.
+		int fiat=195, ford=240, mini=360, passat=430;  // Sedan modellerinin ucretleri integer olarak tanimlanir.
+		
+		printf("\nKiralamak istediginiz sedan modelini seciniz."); // Modeller ve fiyatlari ekrana yazdirilir.
+		printf("\n[1] - Fiat Egea Dizel Manuel - 195 TL");
+		printf("\n[2] - Ford Focus Trend 1.6 Dizel Manuel - 240 TL");
+		printf("\n[3] - Mini Cooper Dizel Otomatik - 360 TL");
+		printf("\n[4] - VW Passat 1.6 Dizel Otomatik - 430 TL");
+		scanf("%d",&sedan); //Yapilan secim taranir.
+		
+		if(sedan==1){ //Secilen sedan icin ucret hesabi yapilir.
+			ucret=fiat*tarih_farki(&t1,&t2); 
+		}
+		else if(sedan==2){ 
+			ucret=ford*tarih_farki(&t1,&t2); 
+		}
+		else if(sedan==3){ 
+			ucret=mini*tarih_farki(&t1,&t2); 
+		}
+		else if(sedan==4){ 
+			ucret=passat*tarih_farki(&t1,&t2); 
+		}
+		else{
+			printf("Hatali giris yaptiniz!"); //Farkli bir sayi girisi durumunda hata uyarisi verir.
+		}
+    }
+	else if(tasit==3){ // Secilen tasit modeli icin if else acilir.
+		int renault=360, dacia=400, peugeot=475, toyota=525; // SUV modellerinin ucretleri integer olarak tanimlanir.
+		
+		printf("\nKiralamak istediginiz SUV modelini seciniz."); // Modeller ve fiyatlari ekrana yazdirilir.
+		printf("\n[1] - Renault Captur Benzinli Otomatik - 360 TL");
+		printf("\n[2] - Dacia Duster 4x4 Dizel Manuel - 400 TL");
+		printf("\n[3] - Peugeot 3008 Dizel Otomatik - 475 TL");
+		printf("\n[4] - Toyota C-HR Hybrid Otomatik - 525 TL");
+		scanf("%d",&suv);
+		
+		if(suv==1){ //Secilen suv icin ucret hesabi yapilir.
+			ucret=renault*tarih_farki(&t1,&t2); 
+		}
+		else if(suv==2){ 
+			ucret=dacia*tarih_farki(&t1,&t2); 
+		}
+		else if(suv==3){ 
+			ucret=peugeot*tarih_farki(&t1,&t2); 
+		}
+		else if(suv==4){ 
+			ucret=toyota*tarih_farki(&t1,&t2); 
+		}
+		else{
+			printf("Hatali giris yaptiniz!"); //Farkli bir sayi girisi durumunda hata uyarisi verir.
+		}
+	}
+	else if(tasit==4){ // Secilen tasit modeli icin if else acilir.
+		int mercedes=525, peugeot=675, volkswagen=765, vipvan=825; // Minibus modellerinin ucretleri integer olarak tanimlanir.
+		
+		printf("\nKiralamak istediginiz minibus modelini seciniz."); // Modeller ve fiyatlari ekrana yazdirilir.
+		printf("\n[1] - Mercedes Vito Dizel Manuel - 525 TL");
+		printf("\n[2] - Peugeot Traveller Dizel Otomatik - 675 TL");
+		printf("\n[3] - Volkswagen Transporter Dizel Otomatik - 765 TL");
+		printf("\n[4] - Mercedes-Benz Klas-V Royal MB VIP Van - 825 TL");
+		scanf("%d",&minibus);
+		
+		if(minibus==1){ //Secilen minibus icin ucret hesabi yapilir.
+			ucret= mercedes*tarih_farki(&t1,&t2); 
+		}
+		else if(minibus==2){ 
+			ucret=peugeot*tarih_farki(&t1,&t2); 
+		}
+		else if(minibus==3){ 
+			ucret=volkswagen*tarih_farki(&t1,&t2); 
+		}
+		else if(minibus==4){ 
+			ucret=vipvan*tarih_farki(&t1,&t2); 
+		}
+		else{
+			printf("Hatali giris yaptiniz!"); //Farkli bir sayi girisi durumunda hata uyarisi verir.
+		}
+	}
+	else{
+		printf("***Hatali giris yaptiniz!***"); //Tasit modeli icin farkli bir sayi girisi durumunda hata uyarisi verir.
+	}
+	printf("\nToplam odemeniz gereken ucret %d TL\n",ucret); //Toplam ucreti ekrana yazdirir.
+	printf("\nOdeme islemini onaylamak icin 1'e, ana menuye donmek icin 2'ye basiniz.\n"); //Islem onayi ister.
+	scanf("%d",&odeme); //Klavyeden odeme okunur.
+	
+	if(odeme==1){ //Odeme onaylandiysa;
+		printf("Odeme isleminiz basariyla gerceklesmistir.\nFaturaniz e-posta adresinize gonderilmistir.\nBizi tercih ettiginiz icin tesekkur ederiz.\n"); 
+		printf("Aracinizla keyifli ve saglikli surusler dileriz. \n");
+		printf("*************************************************"); //Islem onayi alinir,kullaniciya gerekli bilgiler verildikten sonra veda edilir.
+		return 0; //Sistem kapanir.
+	}
+	else if(odeme==2){ //Ana menuye donmek istenildiyse yeniden ana menuye donulur. Satis tamamlanmaz.
+		ana_menu(); 
+	}
+}
+void araclari_listele()
+{
+		printf("\nMotosiklet modelleri ve fiyatlari"); // Modeller ve fiyatlari ekrana yazdirilir.
+		printf("\n[1] - PCX 125 - 145 TL"); 
+		printf("\n[2] - VESPA 150 - 145 TL");
+		printf("\n[3] - HONDA FORZA 250 - 170 TL");
+		printf("\n[4] - HONDA NC 750X DCT - 215 TL");
+		printf("\n**********************************\n");
+		
+		printf("\nSedan modelleri ve fiyatlari"); // Modeller ve fiyatlari ekrana yazdirilir.
+		printf("\n[1] - Fiat Egea Dizel Manuel - 195 TL");
+		printf("\n[2] - Ford Focus Trend 1.6 Dizel Manuel - 240 TL");
+		printf("\n[3] - Mini Cooper Dizel Otomatik - 360 TL");
+		printf("\n[4] - VW Passat 1.6 Dizel Otomatik - 430 TL");
+		printf("\n**********************************\n");
+		
+		printf("\nSUV modelleri ve fiyatlari."); // Modeller ve fiyatlari ekrana yazdirilir.
+		printf("\n[1] - Renault Captur Benzinli Otomatik - 360 TL");
+		printf("\n[2] - Dacia Duster 4x4 Dizel Manuel - 400 TL");
+		printf("\n[3] - Peugeot 3008 Dizel Otomatik - 475 TL");
+		printf("\n[4] - Toyota C-HR Hybrid Otomatik - 525 TL");
+		printf("\n**********************************\n");
+		
+		printf("\nMinibus modelleri ve fiyatlari."); // Modeller ve fiyatlari ekrana yazdirilir.
+		printf("\n[1] - Mercedes Vito Dizel Manuel - 525 TL");
+		printf("\n[2] - Peugeot Traveller Dizel Otomatik - 675 TL");
+		printf("\n[3] - Volkswagen Transporter Dizel Otomatik - 765 TL");
+		printf("\n[4] - Mercedes-Benz Klas-V Royal MB VIP Van - 825 TL");
+		printf("\n**********************************\n");	
+}
+FILE *bilgiler; //Bilgiler isimli dosya tanimlanir.
+
+int kayitlisifreler[50],para, sifre, girissifresi; //Fonksiyonlar icin gerekli int degerleri tanimlanir.
+int a = 1, i, j, k; //Fonksiyonlar icin gerekli int degerleri tanimlanir.
+char kayitlikullanicilar[50][50],kayitlitelno[10], kayitliemail[30], isim[30], soyisim[30], girisismi[30], girissoyismi[30], telno[10], email[30]; //Fonksiyonlar icin gerekli char degerleri tanimlanir.
+	
+void dosyaya_yaz(int index) //Dosyaya yazmak icin bir fonksiyon olusturulur, integer index degeri tanimlanir.
+{
+    bilgiler = fopen("bilgiler.txt", "w"); //Bilgileri yazmak icin bilgiler.txt seklinde bir dosya acilir.
+    for (j = 0; j < index - 1; j++) // j degeri index degerine esit olana kadar, j degeri teker teker arttirilir.
+    {
+        fprintf(bilgiler, "%s %d %s %s \n", kayitlikullanicilar[j], kayitlisifreler[j], kayitlitelno[j], kayitliemail[j]); // For dongusu boyunca bilgiler dosyaya yazdirilir.
+    	fclose(bilgiler); //Dosya kapatilir.
+    }
+}
+
+void Reklam_fonksiyonu(){ // Kullaniciya markamizi tanitmak icin giriste ekrana bir reklam fonksiyonu yazdirilir.
+	printf("**************** MARMARA OTO KIRALAMAYA HOSGELDINIZ ****************");
+	printf("\n\n");
+	printf(" MARMARA OTO KIRALAMA ILE ISTEDIGINIZ YERE GUVENLE ULASIN! ");
+	printf("\n\n Covid-19 surecinde sagliginizi koruyabilmek icin"
+	"\n her kiralama sonrasi araclarin tum kisimlarini dezenfekte ediyoruz."
+	"\n Marmara guvenlik taahhudu ile tum hijyen onlemleri alinmis"
+	"\n arac kiralama deneyimini yasayin."
+	"\n 7/24 Uzman Kadro. Kolay Rezervasyon\n"
+	" Ozel Fiyat Avantaji ve Kacirilmayacak Firsatlar. \n\n");
+	
+	printf("\n\n\n");
+	printf(" MARMARA OTO KIRALAMA ARAC KIRALAMANIN   *EN HIZLI\n");
+	printf("                                         *EN UCUZ\n");
+	printf("	                      	         *EN GUVENLI YERI");
+	printf("\n\n *********************************************************************");
+}
+
+void giris_yap() // Kullanici girisi icin fonksiyon acilir.
+{
+    int index = 0; //Integer index degerine 0 atanir.
+    if ((bilgiler = fopen("bilgiler.txt", "r")) != NULL){ // Dosya bos olmadigi surecte if kosuluna girilir.
+        bilgiler = fopen("bilgiler.txt", "r"); //Okunmak icin bilgiler.txt dosyasi acilir.
+        while (!feof(bilgiler)) //Dosya akisi bastan sona okunur.
+        {
+            fscanf(bilgiler, "%s %d ",&kayitlikullanicilar[index],&kayitlisifreler[index]); //Kayitli kullanici ve kayitli sifreler taranir.
+            index++; //Index degeri arttirilir.
+        }
+        do //Do yapisi icinde giris icin kullanicidan isim,soyisim ve sifre alinir.
+        {
+            printf("Isminizi ve soyisminizi giriniz:\n");
+            scanf("%s%s", &girisismi, &girissoyismi);
+            printf("Sifrenizi giriniz:\n");
+            scanf("%d", &girissifresi);
+            strcat(girisismi, girissoyismi);
+            strupr(girisismi);
+            strupr(girissoyismi);
+                if ((strcmp(girisismi, kayitlikullanicilar[i]) == 0) && girissifresi == kayitlisifreler[i]) //Girilen isim ve sifrenin sistemdeki varligi kontrol edilir.
+                {
+                    printf("\nGiris Onaylandi\nHOSGELDINIZ...\n\n"); //Giris basariliysa kullanici sisteme erisir.
+                    a=0;
+                }
+                else {
+                	printf("\nHatali kullanici adi veya sifre! \nLutfen tekrar deneyiniz. \n\n"); //Hatali giris.
+				}
+        }while (a==1);
+        fclose(bilgiler); //Acilan dosya kapatilir.
+    }
+}
+
+void kayit_ol() //Sisteme kayit olmak icin fonksiyon acilir.
+{
+    bilgiler = fopen("bilgiler.txt", "a"); //Bilgiler isimli dosya icine bilgi yazilmak uzere acilir.
+    printf("\nKayit olmak icin isim ve soyisim giriniz.\n"); //Kayit icin sirayla isim,soyisim,email,telno ve sifre alinir.
+    scanf("%s %s", &isim, &soyisim);
+    printf("\nE posta adresinizi giriniz: \n");
+    scanf("%s",&email);
+    printf("\nTelefon numaranizi giriniz: \n");
+    scanf("%s",&telno);
+    strcat(isim, soyisim);
+    printf("\nKayit olmak icin 4-6 rakam iceren bir sifre olusturunuz.\n");
+    while (1)
+    {
+        scanf("%d", &sifre);
+        if (sifre >= 1000 && sifre <= 999999) //Sifre sinir araligi olusturulur.
+        {
+            break;
+        }
+        else
+        {
+            printf("\nLutfen 4-6 rakam iceren bir sifre giriniz.\n");
+        }
+    }
+    
+    strupr(isim); //Isim ve soyisim dosyaya buyuk harflerle yazilir.
+    fprintf(bilgiler, "%s %d %s %s \n", isim, sifre, email, telno); //Bilgiler dosyaya yazilir.
+    fclose(bilgiler); //Dosya kapatilir.
+    
+    printf("\nKayit islemi basariyla gerceklesmistir.\n\n"); //Basari ile kayit olunur.
+}
+
+void kayit_sil() // Yoneticinin sistemden kullanici silmesi icin fonksiyon olusturulur.
+{
+    int index = 0; 
+    a = 1;
+    if ((bilgiler = fopen("bilgiler.txt", "r")) != NULL) // Dosya bos degilse yani NULL degere esit degilse gerceklesir.
+    {
+        bilgiler = fopen("bilgiler.txt", "r");
+        while (!feof(bilgiler)) // Bilgiler ile gosterilen dosyanin sonuna gelinmisse dosya okunur. Aksi taktirde 0 degeri dondurulur.
+        {
+            fscanf(bilgiler, "%s %d", &kayitlikullanicilar[index], &kayitlisifreler[index]);
+            index++;
+        }
+        printf("Silmek istediginiz hesabin ismini ve soyismini giriniz:\n");
+        scanf("%s%s", &girisismi, &girissoyismi);
+        printf("Silmek istediginiz hesabin sifresini giriniz\n");
+        scanf("%d", &girissifresi);
+        strcat(girisismi, girissoyismi);
+        strupr(girisismi);
+        strupr(girissoyismi);
+        for (i = 0; i < index - 1; i++) // 
+        {
+            if ((strcmp(girisismi, kayitlikullanicilar[i]) == 0) && girissifresi == kayitlisifreler[i]) //Hem kullanici isminin hem de sifrenin birbirine uyumlu olmasini test eder.
+            {
+                k = strlen(kayitlikullanicilar[i]);
+                for (j = 0; j < k; j++)
+                {
+                    kayitlikullanicilar[i][j] = '0'; // Isim ve soyisimin bir arada silinmesi için olusturulan iki boyutlu diziye ve null degeri atanmistir.
+                }
+                kayitlisifreler[i] = 0; // Sifrelere silinerek null atanmistir.
+                
+                a = 0;
+                dosyaya_yaz(index);
+                printf("Silme islemi gerceklestirilmistir.\n\n");
+                
+            }
+        }
+        if (a == 1)
+        {
+            printf("Boyle bir hesap bulunamadi! \nTekrar Deneyiniz! \n ");
+            kayit_sil();
+        }
+    }
+    else
+    {
+        printf("Silinecek herhangi bir hesap bulunmamaktadir.\n\n");
+        
+    }
+}
+
+void musteri_bilgileri(){
+	int yon;
+	
+	FILE*oku=fopen("bilgiler.txt","r"); // Acilan dosyadan kaydedilmis olan bilgilerin okunmasi saglanmistir.
+	while(!feof(oku)) // Oku ile gosterilen dosyanin sonuna gelinmisse dosya okunur. Aksi taktirde 0 degeri dondurulur.
+	{
+		fputchar(fgetc(oku)); // Okunan degerler ekrana basilir.
+	}
+	fclose(oku); // Dosya kapanir.
+	printf("Kayit silmek icin 1, araclari goruntulemek icin 2, sistemden cikmak icin 3'e basiniz: \n");
+	scanf("%d",&yon);
+	if(yon==1){ // Kullanici 1 degerini girdiginde sistemden kayit siler, 2 girdiginde arac bilgilerini goruntuler, 3 girdiginde sistemden cikis saglanir.
+		kayit_sil();
+	}
+	else if(yon==2){
+		araclari_listele(); // Sistemdeki araclar goruntulenir.
+	}
+	else if(yon==3){
+		return;
+	}
+	else{
+		printf("Hatali giris yaptiniz!");
+	}	
+}
+
+
+
+void kullanici_haklarim(){	//Kullanici haklarini veren bir fonksiyon olusturulmutur.
+	int s; // Secim yapmak icin bir integer degisgen tanimlanmistir.
+	printf("*** KULLANICI SOZLEŞMESI ***\n\n");
+	printf("[1]-Carpisma veya devrilme dolayisiyla aracta olabilecek hasarlarin"
+	"\ntamiri nedeniyle olusacak masraflar,kiraci tarafindan odenecektir."
+	"\n[2]-Kiraciya verilen aracta hasar olusmasi halinde,"
+	"\nkiracidan ayrica hasarin yuzde 5'i oraninda hasar takip bedeli alinir."
+	"\n[3]-Kiracinin bu sozlesmenin herhangi bir maddesine uymamasi,"
+	"\nozellikle vasitayi kararlastirilan tarihte teslim etmemesi halinde,"
+	"\narac nerede olursa olsun ve on uyariya gerek kalmadan derhal geri alma yetkisini tanir.");
+
+	printf("\nAna menuye donmek icin 1'i cikmak icin 2'yi tuslayiniz.");
+	scanf("%d",&s);
+	switch(s){ // Secim 's' 1 oldugunda ana menuye donmeyi, 2 oldugunda ise cikis yapmayi saglar.
+		case 1 : ana_menu (); break;
+		case 2 : return; break;
+		
+		default : printf("Hatali secim yaptiniz! \n\n ");
+	}
+}
+		 
+void destek_ve_iletisim(){ // Kullanicinin yoneticiye ulasabilecegi iletisim bilgilerini ekrana basan bir fonksiyon olusturulmustur.
+	int y;
+	printf("\n **** DESTEK VE ILETISIM ****");
+	printf("\n\n Aracinizla bir kaza gecirmeniz, aracin calinmasi, arizalanmasi," 
+	"\n lastik patlamasi ve her türlü acil yardima ihtiyac duydugunuz durumda,"
+	"\n 7 gun 24 saat, tum Turkiye’de hizmet veren 444 0 235 numarali"
+	"\n Acil Yardim hattimizi arayabilirsiniz."
+	"\n Bize Yazin !"
+    "\n Sorulariniz, memnuniyetiniz, oneri ve gorusleriniz icin 7 gun 24 saat,"
+	"\n e-posta araciligi ile rentacar@marmara.edu.tr bize ulasabilirsiniz.");
+	
+	printf("Ana menuye donmek icin 1'i cikmak icin 2'yi tuslayiniz.");
+	scanf("%d",&y);
+	switch(y){ 
+		case 1 : ana_menu (); break; // Kullanici 'y' için 1'i sectiginde ana menuye doner. 
+		case 2 : return; break; // 2'yi sectiginde cikis yapar.
+		
+		default : printf("Hatali secim yaptiniz! \n\n ");
+	}
+}
+
+int main (){
+
+	Reklam_fonksiyonu();
+
+	int secim;
+	printf(" \n\nYonetici Girisi Icin 1'e \nKullanici Girisi Icin 2'ye basiniz: ");
+	scanf("%d",&secim);
+	
+	if(secim==1){ 
+	char kullaniciadi[6]="admin"; //Yonetici girisi icin 'admin' kullaniciadi ile giris saglanir.
+	char kullanici[30]="0";
+	int adkontrol=0;
+	for(;;) //Yonetici girisi icin sonsuz bir dongu olusturulmustur.
+	{ 
+		printf("\nKullanici Adinizi Giriniz:");
+		scanf("%s",kullanici);
+		fflush(stdin); //Girilen veri degiskene aktarildiktan sonra gerekli alan bosaltilmaktadir.
+		adkontrol=strcmp(kullanici,kullaniciadi); //Girilen kullanici ile kullanici adi dizileri karsilastirilmaktadir.
+		
+		if(adkontrol!=0) //Girilen kullanici adinin dogruluguna gore if dongusune girilir.
+		{ 	 
+			printf("\nYanlis Kullanici Adi Girdiniz.\n");
+			printf("Lutfen Tekrar Deneyiniz.\n");
+			printf("\nLutfen Bekleyiniz...");
+			Sleep(2000); //
+			system("CLS"); //Panel ekranini temizler.
+			printf("\n\n");
+			continue; //Tekrar for dongusune donulmesi saglanmaktadir.
+		}
+         
+		else //Kullanicinin girmis oldugu kullanici adiyla, sistemde kayitli kullanici adinin uyusmasi halinde else komutu calisir.
+		{   
+			printf("\nKullanici Adiniz Dogrulanmaktadir...");
+			Sleep(2000);
+			system("CLS");
+			printf("\nKullanici Adiniz Dogrudur.\n");
+			break; //for dongusunden cikis saglanmaktadir.
+		}	
+	}
+	        int yonetici; 
+			printf("\n***** Yonetici paneline hosgeldiniz.***** \n");
+			printf("Yapmak istediginiz islemi seciniz: \n");
+			printf("[1]-Musteri Bilgilerini Goruntule. \n");
+			printf("[2]-Musteri Kaydi Sil. \n");
+			printf("[3]-Firma Filosunu Goruntule. \n");
+			scanf("%d",&yonetici); // Yonetici hangi islemi yapacagini secer.
+			
+			switch(yonetici){
+				
+				case 1 : musteri_bilgileri(); break; // Olusturulan musteri_bilgileri fonksiyonu cagirilir.
+				case 2 : kayit_sil(); break; // Olusturulan kayit_sil fonksiyonu cagirilir.
+				case 3 : araclari_listele(); break; // Olusturulan araclari_listele fonksiyonu cagirilir.
+				default : printf("Hatali secim yaptiniz! \n\n ");
+			}
+		}
+    else if(secim==2){ //Kullanici girisi yapilmasini saglar.
+    		int giris;
+    		printf("Kullanici Girisine Hosgeldiniz!\n");
+    		printf("Kayit olmak icin 1'e \nGiris yapmak icin 2'ye basiniz.");
+    		scanf("%d",&giris); // Kullanicinin kayit mi olacagini yoksa giris mi yapacagini secmesini saglar.
+    		
+    		switch(giris){
+    			
+    			case 1 : kayit_ol (); break;  //Olusturulan kayit_ol fonksiyonu cagirilir.
+    			case 2 : giris_yap (); break; //Olusturulan giris_yap fonksiyonu cagirilir.
+    			default : printf("Hatali secim yaptiniz! \n\n ");
+			}
+    		ana_menu();		
+    }
+	else{
+			printf("Hatali giris yaptiniz.");
+	}
+   	return 0;
+}
