@@ -1,1 +1,4 @@
-Rent a car otomasyonu müşterilerin sistemden araç kiralamasını ve kiraladıkları araçların kendilerine teslim edilmesini amaçlar. Bu otomasyon; sisteme giriş yapmayı ya da kaydolmayı sağlayan, araç kiralama işlemlerini yapan, kullanıcı bilgilerini sisteme kaydeden ve yöneticiye bu bilgileri silme imkânı sağlayan, araç bilgilerini ve teslim tarihini isteyerek bunlar üzerinden günlük ücret hesaplaması yapan bir programdır.
+Rent a car otomasyonu müşterilerin sistemden araç kiralamasını ve kiraladıkları araçların kendilerine teslim edilmesini amaçlar.
+Bu otomasyon; sisteme giriş yapmayı ya da kaydolmayı sağlayan, araç kiralama işlemlerini yapan, kullanıcı bilgilerini sisteme
+kaydeden ve yöneticiye bu bilgileri silme imkânı sağlayan, araç bilgilerini ve teslim tarihini isteyerek bunlar üzerinden günlük 
+ücret hesaplaması yapan bir programdır.
